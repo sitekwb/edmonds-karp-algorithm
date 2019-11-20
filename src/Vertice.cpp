@@ -8,7 +8,7 @@ using namespace std;
 
 Edge &Vertice::createEdge(int verticeNumber, double edgeCapacity) {
     auto edge = new Edge(edgeCapacity);
-    edges.insert({verticeNumber, *edge});
+    edges.insert({verticeNumber, edge});
     return *edge;
 }
 
@@ -16,16 +16,15 @@ Vertice::Vertice(double capacity) {
     this->capacity = capacity;
 }
 
-const std::unordered_map<int, Edge&> &Vertice::getEdges() const {
+const std::unordered_map<int, Edge*> &Vertice::getEdges() const {
     return edges;
 }
 
-Vertice::~Vertice() {
-    for(auto e: edges){
-        delete &e;
-    }
-}
 
 double Vertice::infinity() {
     return numeric_limits<double>::max();
+}
+
+Edge &Vertice::operator[](int v_2) {
+    return *(edges[v_2]);
 }

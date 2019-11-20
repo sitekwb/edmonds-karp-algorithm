@@ -6,6 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(include)
 
 file(GLOB SOURCES "src/*.cpp")
-set(SOURCES ${SOURCES} main.cpp)
+set(SOURCES ${SOURCES})
 
-add_executable(aal_graphs ${SOURCES})
+add_executable(aal_graphs main.cpp ${SOURCES})

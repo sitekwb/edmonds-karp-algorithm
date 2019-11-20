@@ -19,6 +19,8 @@ public:
     void setReverseEdge(Edge *reverseEdge);
 
     Edge *getReverseEdge() const;
+
+    virtual ~Edge(){}
 };
 
 

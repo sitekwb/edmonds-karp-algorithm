@@ -2,7 +2,7 @@
 // Created by Wojtek on 15/11/2019.
 //
 
-#include "../include/Controller.h"
+#include "Controller.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -12,23 +12,23 @@ using namespace std;
 /**
      * DATA
      * (liczba źródeł) 2
-     * (pierwszy punkt odbioru) 5 (liczba punktów odbioru) 2
+     * (pierwszy punkt odbioru) 5
      * (w1) 3 c13 4 c14
      * (w2) 4 c24
      * (w3) c3 5 c35
      * (w4) c4 5 c45 6 c46
      */
 void Controller::load_data(){
-    int source_count;
-    cin>>source_count;
+    int sourceCount;
+    cin >> sourceCount;
 
-    int first_receiver_index;
-    cin>>first_receiver_index;
+    int firstReceiverIndex, receiversNumber;
+    cin >> firstReceiverIndex >> receiversNumber;
 
     graph.createS();
 
 
-    for(int i=0; i<source_count; ++i){
+    for(int i=0; i < sourceCount; ++i){
         auto vertice = graph.createSource();
 
         string str;
@@ -64,9 +64,11 @@ void Controller::load_data(){
         }
     }
 
+    graph.createReceivers(firstReceiverIndex, receiversNumber);
+
     auto t = graph.createT();
 
-    graph.connectReceiversWithT(t, first_receiver_index);
+    graph.connectReceiversWithT(t, firstReceiverIndex);
 
     graph.createReverseEdges();
 }

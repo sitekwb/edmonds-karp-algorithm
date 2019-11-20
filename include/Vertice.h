@@ -11,17 +11,23 @@
 
 class Vertice {
     double capacity;
-    std::unordered_map<int, Edge&> edges;
+    std::unordered_map<int, Edge*> edges;
 
 public:
     static double infinity();
 
-    Vertice(double capacity);
+    explicit Vertice(double capacity);
     Edge &createEdge(int verticeNumber, double edgeCapacity);
 
-    virtual ~Vertice();
+    virtual ~Vertice(){
+        for(auto e: edges){
+            delete e.second;
+        }
+    }
 
-    const std::unordered_map<int, Edge&> &getEdges() const;
+    const std::unordered_map<int, Edge*> &getEdges() const;
+
+    Edge &operator[](int v_2);
 };
 
 

@@ -2,7 +2,7 @@
 // Created by Wojtek on 19/11/2019.
 //
 
-#include <Edge.h>
+#include "Edge.h"
 
 Edge::Edge(double capacity) {
     this->capacity = capacity;
@@ -16,6 +16,6 @@ Edge *Edge::getReverseEdge() const {
 }
 
 void Edge::setReverseEdge(Edge *reverseEdge) {
-    Edge::reverseEdge = reverseEdge;
+    this->reverseEdge = reverseEdge;
 }
 
