@@ -11,12 +11,11 @@
 
 class Controller {
     Graph graph;
-    std::forward_list<int>augmentingPath;
 public:
-    void load_data();
+    void load_data(std::istream &stream);
     bool existsAugmentingPath();
     void synchronizeFlowAndGraph();
-    void outputResults();
+    void outputResults(std::ostream &stream);
 
     virtual ~Controller() {}
 

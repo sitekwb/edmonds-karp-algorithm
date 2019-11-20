@@ -28,3 +28,27 @@ double Vertice::infinity() {
 Edge &Vertice::operator[](int v_2) {
     return *(edges[v_2]);
 }
+
+Color Vertice::getColor() const {
+    return color;
+}
+
+void Vertice::setColor(Color color) {
+    Vertice::color = color;
+}
+
+int Vertice::getParentVertice() const {
+    return parentVertice;
+}
+
+void Vertice::setParentVertice(int parentVertice) {
+    Vertice::parentVertice = parentVertice;
+}
+
+int Vertice::noParent() {
+    return -1;
+}
+
+bool Vertice::hasParent() {
+    return parentVertice != -1;
+}

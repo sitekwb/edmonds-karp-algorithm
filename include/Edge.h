@@ -6,13 +6,12 @@
 #define AAL_GRAPHS_EDGE_H
 
 
+#include "Color.h"
 
 class Edge{
     double capacity;
     double flow;
-    struct Edge *reverseEdge;
-    bool isVisited;
-
+    Edge *reverseEdge;
 public:
     Edge(double capacity);
 

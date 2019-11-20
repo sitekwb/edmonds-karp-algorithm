@@ -4,10 +4,9 @@
 
 #include "Edge.h"
 
-Edge::Edge(double capacity) {
+Edge::Edge(double capacity){
     this->capacity = capacity;
     this->flow = 0;
-    this->isVisited = false;
     this->reverseEdge = nullptr;
 }
 

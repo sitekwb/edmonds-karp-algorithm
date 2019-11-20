@@ -11,12 +11,26 @@
 
 class Vertice {
     double capacity;
+    Color color;
+    int parentVertice;
     std::unordered_map<int, Edge*> edges;
 
 public:
     static double infinity();
+    static int noParent();
 
     explicit Vertice(double capacity);
+
+    Color getColor() const;
+
+    void setColor(Color color);
+
+    int getParentVertice() const;
+
+    void setParentVertice(int parentVertice);
+
+    bool hasParent();
+
     Edge &createEdge(int verticeNumber, double edgeCapacity);
 
     virtual ~Vertice(){
