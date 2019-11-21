@@ -6,7 +6,6 @@
 
 Edge::Edge(double capacity){
     this->capacity = capacity;
-    this->flow = 0;
     this->reverseEdge = nullptr;
 }
 
@@ -16,5 +15,13 @@ Edge *Edge::getReverseEdge() const {
 
 void Edge::setReverseEdge(Edge *reverseEdge) {
     this->reverseEdge = reverseEdge;
+}
+
+double Edge::getCapacity() const {
+    return capacity;
+}
+
+void Edge::setCapacity(double capacity) {
+    Edge::capacity = capacity;
 }
 

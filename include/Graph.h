@@ -6,20 +6,22 @@
 #define AAL_GRAPHS_GRAPH_H
 
 #include <vector>
-#include <forward_list>
+#include <unordered_map>
 #include "Vertice.h"
 
 class Graph {
     std::vector<Vertice*> vertices;
     std::vector<double>flows;
-    std::forward_list<int>augmentingPath;
+    int firstReceiverIndex;
 public:
-    const std::vector<double> &getFlows() const;
-
+    void setFirstReceiverIndex(int firstReceiverIndex);
+    void updateFlow();
 private:
+    double currentFlow;
 
     Vertice &createInfiniteVertice();
 public:
+    const std::vector<double> &getFlows() const;
     void addVertice(Vertice&);
     Vertice &createS();
     Vertice &createT();
@@ -35,6 +37,9 @@ public:
     void createReceiversFlows(int receiversCount);
 
     bool searchAugmentingPath();
+    Edge *getEdge(int v1, int v2);
+
+    void synchronizeFlowAndGraph();
 
     virtual ~Graph(){
         for(auto v: vertices){
@@ -45,6 +50,7 @@ public:
     int getSize();
     int getTNumber();
     Vertice &getS();
+    int getAugmentingPathReceiverNumber();
 
 };
 

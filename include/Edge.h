@@ -10,9 +10,14 @@
 
 class Edge{
     double capacity;
-    double flow;
+public:
+    void setCapacity(double capacity);
+
+private:
     Edge *reverseEdge;
 public:
+    double getCapacity() const;
+
     Edge(double capacity);
 
     void setReverseEdge(Edge *reverseEdge);

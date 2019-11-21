@@ -78,6 +78,7 @@ void Controller::load_data(std::istream &stream){
     }
 
     int firstReceiverIndex = sourceCount + valveCount + 1;
+    graph.setFirstReceiverIndex(firstReceiverIndex);
 
     graph.createReceivers(firstReceiverIndex, receiversCount);
 
@@ -94,7 +95,7 @@ bool Controller::existsAugmentingPath(){
     return graph.searchAugmentingPath();
 }
 void Controller::synchronizeFlowAndGraph(){
-    //TODO
+    graph.synchronizeFlowAndGraph();
 }
 void Controller::outputResults(ostream &stream){
     int i = 0;

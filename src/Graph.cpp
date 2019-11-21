@@ -138,6 +138,9 @@ bool Graph::searchAugmentingPath() {
         auto u = queue.front();
         queue.pop();
         for(auto edge: u.second->getEdges()){
+            if(edge.second->getCapacity() == 0){
+                continue;
+            }
             auto v = std::make_pair(edge.first, vertices[edge.first]);
             if(v.second->getColor() == white){
                 v.second->setColor(grey);
@@ -149,10 +152,12 @@ bool Graph::searchAugmentingPath() {
     }
     //BFS done
 
+    currentFlow = std::numeric_limits<int>::max();
     int v = getTNumber();
     while(vertices[v]->hasParent()){
-        augmentingPath.emplace_front(v);
-        v = vertices[v]->getParentVertice();
+        int parentV = vertices[v]->getParentVertice();
+        currentFlow = std::min(currentFlow, getEdge(parentV, v)->getCapacity());
+        v = parentV;
         if( v == 0 ){
             break;
         }
@@ -163,6 +168,36 @@ bool Graph::searchAugmentingPath() {
 
 Vertice &Graph::getS() {
     return *(vertices[0]);
+}
+
+Edge *Graph::getEdge(int v1, int v2) {
+    return &(*vertices[v1])[v2];
+}
+
+void Graph::synchronizeFlowAndGraph() {
+    int v_num = getTNumber();
+    do{
+        int v_parent = vertices[v_num]->getParentVertice();
+        auto &edge = (*vertices[v_parent])[v_num];
+        edge.setCapacity(edge.getCapacity() - currentFlow);
+        edge.getReverseEdge()->setCapacity(edge.getCapacity() + currentFlow);
+
+        v_num = v_parent;
+    }while(v_num != 0);
+
+    updateFlow();
+}
+
+int Graph::getAugmentingPathReceiverNumber() {
+    return vertices[getTNumber()]->getParentVertice();
+}
+
+void Graph::setFirstReceiverIndex(int firstReceiverIndex) {
+    Graph::firstReceiverIndex = firstReceiverIndex;
+}
+
+void Graph::updateFlow() {
+    flows[getAugmentingPathReceiverNumber() - firstReceiverIndex] += currentFlow;
 }
 
 
