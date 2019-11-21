@@ -52,3 +52,11 @@ int Vertice::noParent() {
 bool Vertice::hasParent() {
     return parentVertice != -1;
 }
+
+double Vertice::getCapacity() const {
+    return capacity;
+}
+
+void Vertice::reduceCapacity(double capacity) {
+    this->capacity -= capacity;
+}

@@ -13,6 +13,12 @@ class Vertice {
     double capacity;
     Color color;
     int parentVertice;
+public:
+    double getCapacity() const;
+
+    void reduceCapacity(double capacity);
+
+private:
     std::unordered_map<int, Edge*> edges;
 
 public:

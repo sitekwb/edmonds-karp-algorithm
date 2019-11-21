@@ -22,10 +22,10 @@ private:
     Vertice &createInfiniteVertice();
 public:
     const std::vector<double> &getFlows() const;
-    void addVertice(Vertice&);
+    Vertice &addVertice(Vertice&);
     Vertice &createS();
     Vertice &createT();
-    Vertice &createSource();
+    Vertice &createSource(double capacity);
     void createReceivers(int firstReceiverIndex, int receiversNumber);
 
     Edge &connect(int v_1, int v_2, double edgeCapacity, bool reverseEdge = true);

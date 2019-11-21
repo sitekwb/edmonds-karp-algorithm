@@ -40,34 +40,23 @@ void Controller::load_data(std::istream &stream){
     string str;
     getline(stream, str);
 
-    //create sources
-    for(int i=0; i < sourceCount; ++i){
-        auto &vertice = graph.createSource();
 
-        if(!getline(stream, str)){
-            throw exception();
-        }
-        stringstream ss(str);
-
-        int verticeNumber;
-        double edgeCapacity;
-
-        while((ss >> verticeNumber && ss >> edgeCapacity) || !ss.eof()){
-            vertice.createEdge(verticeNumber, edgeCapacity);
-        }
-    }
-
-
-    //create valves
-    for(int i=0; i<valveCount; ++i){
+    //create sources and valves
+    for(int i=0; i < sourceCount + valveCount; ++i){
         getline(stream, str);
         stringstream ss(str);
 
         double capacity;
         ss >> capacity;
 
-        auto vertice = new Vertice(capacity);
-        graph.addVertice(*vertice);
+        Vertice *vertice;
+        if(i < sourceCount){
+            vertice = &graph.createSource(capacity);
+        }
+        else{
+            vertice = new Vertice(capacity);
+            graph.addVertice(*vertice);
+        }
 
         int verticeNumber;
         double edgeCapacity;

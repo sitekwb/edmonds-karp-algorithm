@@ -5,8 +5,9 @@
 #include <queue>
 #include "Graph.h"
 
-void Graph::addVertice(Vertice &vertice) {
+Vertice &Graph::addVertice(Vertice &vertice) {
     vertices.push_back(&vertice);
+    return vertice;
 }
 
 Vertice &Graph::createInfiniteVertice(){
@@ -52,8 +53,8 @@ Edge &Graph::connect(int v_1, int v_2, double edgeCapacity, bool reverseEdge) {
 
 
 
-Vertice &Graph::createSource() {
-    auto &source = createInfiniteVertice();
+Vertice &Graph::createSource(double capacity) {
+    auto &source = addVertice(*new Vertice(capacity));
 
     // connect with s
     auto &s = *(vertices[0]);
@@ -138,10 +139,10 @@ bool Graph::searchAugmentingPath() {
         auto u = queue.front();
         queue.pop();
         for(auto edge: u.second->getEdges()){
-            if(edge.second->getCapacity() == 0){
+            auto v = std::make_pair(edge.first, vertices[edge.first]);
+            if(edge.second->getCapacity() == 0 || v.second->getCapacity() == 0){
                 continue;
             }
-            auto v = std::make_pair(edge.first, vertices[edge.first]);
             if(v.second->getColor() == white){
                 v.second->setColor(grey);
                 v.second->setParentVertice(u.first);
@@ -152,11 +153,11 @@ bool Graph::searchAugmentingPath() {
     }
     //BFS done
 
-    currentFlow = std::numeric_limits<int>::max();
+    currentFlow = std::numeric_limits<double>::max();
     int v = getTNumber();
     while(vertices[v]->hasParent()){
         int parentV = vertices[v]->getParentVertice();
-        currentFlow = std::min(currentFlow, getEdge(parentV, v)->getCapacity());
+        currentFlow = std::min({currentFlow, getEdge(parentV, v)->getCapacity(), vertices[v]->getCapacity()});
         v = parentV;
         if( v == 0 ){
             break;
@@ -179,6 +180,8 @@ void Graph::synchronizeFlowAndGraph() {
     do{
         int v_parent = vertices[v_num]->getParentVertice();
         auto &edge = (*vertices[v_parent])[v_num];
+
+        vertices[v_num]->reduceCapacity(currentFlow);
         edge.setCapacity(edge.getCapacity() - currentFlow);
         edge.getReverseEdge()->setCapacity(edge.getCapacity() + currentFlow);
 
