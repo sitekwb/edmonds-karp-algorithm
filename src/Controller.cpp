@@ -80,13 +80,13 @@ void Controller::load_data(std::istream &stream){
     graph.createReceiversFlows(receiversCount);
 }
 
-bool Controller::existsAugmentingPath(){
+bool Controller::exists_augmenting_path(){
     return graph.searchAugmentingPath();
 }
-void Controller::synchronizeFlowAndGraph(){
+void Controller::synchronize_flow_and_graph(){
     graph.synchronizeFlowAndGraph();
 }
-void Controller::outputResults(ostream &stream){
+void Controller::output_results(ostream &stream){
     int i = 0;
     double flowSum = 0;
     for(auto flow: graph.getFlows()){

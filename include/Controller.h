@@ -11,12 +11,15 @@
 
 class Controller {
     Graph graph;
-public:
-    void load_data(std::istream &stream);
-    bool existsAugmentingPath();
-    void synchronizeFlowAndGraph();
-    void outputResults(std::ostream &stream);
 
+public:
+    ///   ---METHODS---
+    void load_data(std::istream &stream);
+    bool exists_augmenting_path();
+    void synchronize_flow_and_graph();
+    void output_results(std::ostream &stream);
+
+    ///   ---DESTRUCTOR---
     virtual ~Controller() {}
 
 };

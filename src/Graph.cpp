@@ -89,12 +89,6 @@ int Graph::getTNumber() {
     return getSize()-1;
 }
 
-void Graph::connectSourcesWithS() {
-    for(int i=1; i < vertices.size(); ++i){
-        connect(0, i, Vertice::infinity(), false);
-    }
-}
-
 void Graph::createReceiversFlows(int receiversCount) {
     flows.resize(receiversCount, 0);
 }

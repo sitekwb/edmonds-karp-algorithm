@@ -1,23 +1,38 @@
 #include "Controller.h"
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
+#include <string>
+
+using namespace std;
 
 int main(int argc, char *argv[]) {
-    auto c = new Controller;
+    try{
+        auto controller = new Controller;
 
-    std::fstream file_stream(argv[1], std::fstream::in);
+        if(argc != 2){
+            throw invalid_argument("Required one argument. Given "+to_string(argc-1)+".");
+        }
 
-    c->load_data(file_stream);
+        fstream file_stream(argv[1], fstream::in);
+        file_stream.exceptions ( ifstream::failbit | ifstream::badbit );
 
-    file_stream.close();
+        controller->load_data(file_stream);
 
-    while(c->existsAugmentingPath()) {
-        c->synchronizeFlowAndGraph();
+        file_stream.close();
+
+        while(controller->exists_augmenting_path()) {
+            controller->synchronize_flow_and_graph();
+        }
+
+        controller->output_results(cout);
+
+        delete controller;
     }
-
-    c->outputResults(std::cout);
-
-    delete c;
+    catch (exception &e) {
+        cerr << e.what();
+        return -1;
+    }
 
     return 0;
 }
