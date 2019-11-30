@@ -14,6 +14,8 @@ Edge &Vertice::createEdge(int verticeNumber, double edgeCapacity) {
 
 Vertice::Vertice(double capacity) {
     this->capacity = capacity;
+    this->color = WHITE;
+    this->parentVertice = noParent();
 }
 
 const std::unordered_map<int, Edge*> &Vertice::getEdges() const {
@@ -59,4 +61,22 @@ double Vertice::getCapacity() const {
 
 void Vertice::reduceCapacity(double capacity) {
     this->capacity -= capacity;
+}
+
+int Vertice::getEdgesCount() {
+    return edges.size();
+}
+
+bool Vertice::issetEdge(int vIndex) {
+    try {
+        edges.at(vIndex);
+    }
+    catch(std::out_of_range &e){
+        return false;
+    }
+    return true;
+}
+
+void Vertice::incrementCapacity(double capacity) {
+    Vertice::capacity += capacity;
 }

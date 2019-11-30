@@ -19,8 +19,8 @@ using namespace std;
      * (w2) 4 c24
      * (w3) c3 5 c35
      * (w4) c4 5 c45 6 c46
-     */
-void Controller::load_data(std::istream &stream){
+*/
+void Controller::load_data(std::istream &stream) {
     int sourceCount;
     stream >> sourceCount;
 
@@ -30,7 +30,7 @@ void Controller::load_data(std::istream &stream){
     int receiversCount;
     stream >> receiversCount;
 
-    if(!stream){
+    if (!stream) {
         throw exception();
     }
 
@@ -42,7 +42,7 @@ void Controller::load_data(std::istream &stream){
 
 
     //create sources and valves
-    for(int i=0; i < sourceCount + valveCount; ++i){
+    for (int i = 0; i < sourceCount + valveCount; ++i) {
         getline(stream, str);
         stringstream ss(str);
 
@@ -50,10 +50,9 @@ void Controller::load_data(std::istream &stream){
         ss >> capacity;
 
         Vertice *vertice;
-        if(i < sourceCount){
+        if (i < sourceCount) {
             vertice = &graph.createSource(capacity);
-        }
-        else{
+        } else {
             vertice = new Vertice(capacity);
             graph.addVertice(*vertice);
         }
@@ -61,7 +60,7 @@ void Controller::load_data(std::istream &stream){
         int verticeNumber;
         double edgeCapacity;
 
-        while((ss >> verticeNumber && ss >> edgeCapacity) || !ss.eof()){
+        while ((ss >> verticeNumber && ss >> edgeCapacity) || !ss.eof()) {
             vertice->createEdge(verticeNumber, edgeCapacity);
         }
     }
@@ -80,16 +79,18 @@ void Controller::load_data(std::istream &stream){
     graph.createReceiversFlows(receiversCount);
 }
 
-bool Controller::exists_augmenting_path(){
+bool Controller::exists_augmenting_path() {
     return graph.searchAugmentingPath();
 }
-void Controller::synchronize_flow_and_graph(){
+
+void Controller::synchronize_flow_and_graph() {
     graph.synchronizeFlowAndGraph();
 }
-void Controller::output_results(ostream &stream){
+
+void Controller::output_results(ostream &stream) {
     int i = 0;
     double flowSum = 0;
-    for(auto flow: graph.getFlows()){
+    for (auto flow: graph.getFlows()) {
         stream << setw(3) << ++i << ": " << flow << endl;
         flowSum += flow;
     }

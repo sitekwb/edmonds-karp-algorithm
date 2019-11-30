@@ -24,9 +24,9 @@ Vertice &Graph::createT() {
     return createInfiniteVertice();
 }
 
-void Graph::connectReceiversWithT(Vertice &t, int first_receiver_index) {
+void Graph::connectReceiversWithT(Vertice &t, int first_receiver_index, double flow) {
     for(int i=first_receiver_index; i < vertices.size() - 1; ++i){
-        connect(i, getTNumber(), Vertice::infinity(), false);
+        connect(i, getTNumber(), flow, false);
     }
 }
 
@@ -120,11 +120,11 @@ const std::vector<double> &Graph::getFlows() const {
 */
 bool Graph::searchAugmentingPath() {
     for(auto u: vertices){
-        u->setColor(white);
+        u->setColor(WHITE);
         u->setParentVertice(Vertice::noParent());
     }
     auto &s = getS();
-    s.setColor(grey);
+    s.setColor(GREY);
 
     std::queue<std::pair<int, Vertice *>>queue;
     queue.push({0, &s});
@@ -137,13 +137,13 @@ bool Graph::searchAugmentingPath() {
             if(edge.second->getCapacity() == 0 || v.second->getCapacity() == 0){
                 continue;
             }
-            if(v.second->getColor() == white){
-                v.second->setColor(grey);
+            if(v.second->getColor() == WHITE){
+                v.second->setColor(GREY);
                 v.second->setParentVertice(u.first);
                 queue.push(v);
             }
         }
-        u.second->setColor(black);
+        u.second->setColor(BLACK);
     }
     //BFS done
 
@@ -195,6 +195,36 @@ void Graph::setFirstReceiverIndex(int firstReceiverIndex) {
 
 void Graph::updateFlow() {
     flows[getAugmentingPathReceiverNumber() - firstReceiverIndex] += currentFlow;
+}
+
+Graph::Graph(int sourceCount, int valveCount, int receiverCount) {
+    createS();
+
+    for(int i=0 ; i<sourceCount; ++i) {
+        createSource(0);
+    }
+
+    for(int i=0; i<valveCount; ++i){
+        addVertice(*(new Vertice(0)));
+    }
+
+    firstReceiverIndex = sourceCount + valveCount + 1;
+
+    createReceivers(firstReceiverIndex, receiverCount);
+
+    auto t = createT();
+
+    connectReceiversWithT(t, firstReceiverIndex, 0);
+
+}
+
+const std::vector<Vertice *> &Graph::getVertices() const {
+    return vertices;
+}
+
+Graph::Graph() {
+    firstReceiverIndex = 0;
+    currentFlow = 0;
 }
 
 

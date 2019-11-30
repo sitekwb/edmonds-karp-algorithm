@@ -22,6 +22,7 @@ public:
 
     //   ---GETTERS & SETTERS---
     double getCapacity() const;
+    void incrementCapacity(double capacity);
     void reduceCapacity(double capacity);
 
     Color getColor() const;
@@ -38,6 +39,8 @@ public:
 
     //   ---METHODS---
     Edge &createEdge(int verticeNumber, double edgeCapacity);
+    int getEdgesCount();
+    bool issetEdge(int vIndex);
 
     //   ---OPERATORS---
     Edge &operator[](int v_2);

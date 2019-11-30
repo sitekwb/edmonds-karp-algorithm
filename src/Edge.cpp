@@ -2,6 +2,8 @@
 // Created by Wojtek on 19/11/2019.
 //
 
+#include <Edge.h>
+
 #include "Edge.h"
 
 Edge::Edge(double capacity){
@@ -24,4 +26,3 @@ double Edge::getCapacity() const {
 void Edge::setCapacity(double capacity) {
     Edge::capacity = capacity;
 }
-

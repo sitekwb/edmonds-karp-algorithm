@@ -6,9 +6,9 @@
 #define AAL_GRAPHS_COLOR_H
 
 enum Color{
-    white,
-    grey,
-    black
+    WHITE,
+    GREY,
+    BLACK
 };
 
 
