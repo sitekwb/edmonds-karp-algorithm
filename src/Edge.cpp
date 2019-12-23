@@ -26,3 +26,7 @@ double Edge::getCapacity() const {
 void Edge::setCapacity(double capacity) {
     Edge::capacity = capacity;
 }
+
+void Edge::scaleCapacity(double maxCapacity) {
+        capacity /= maxCapacity;
+}

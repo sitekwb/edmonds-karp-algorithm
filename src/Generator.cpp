@@ -24,40 +24,51 @@ Generator::Generator(int _sourceCount, int _valveCount, int _receiverCount, int 
 
 void Generator::generateGraph() {
     //to stop generating augmenting paths we need all valves connected and augmentingPathCount zeroed
-    while (disconnectedValves > 0 || augmentingPathCount > 0) {
+    while (disconnectedValves > 0 || augmentingPathCount-- > 0) {
         addAugmentingPath();
     }
 
-    //TODO scale graph
+    // scale graph capacities to [0-1]
+    // O(2(V+E))
+    scaleCapacity(getMaxCapacity());
 }
 
+
+
 void Generator::addAugmentingPath() {
+    // RANDOM GENERATION
     int augmentingPathLength = (int) augmentingPathDistribution(generator);
     int sourceIndex = sourceDistribution(generator);
     double flow = flowDistribution(generator);
-    auto vertices = graph.getVertices();
 
+    // INITIALIZATION
+    auto vertices = graph.getVertices();
     auto source = vertices[sourceIndex];
-    //find first valve
+    // connect SOURCE <-> VALVE1
     int valveIndex = nextValveIndex();
-    //connect source with first valve
     connectValves(*source, valveIndex, flow);
-    //set parents - (it has to be path, so we shouldn't visit valve two times)
     vertices[valveIndex]->setParentVertice(Vertice::noParent());
-    //connect rest of valves
+    // connect VALVES
     for (int oldValveIndex = valveIndex; augmentingPathLength > 0; --augmentingPathLength, oldValveIndex = valveIndex) {
-        int valveIndex = nextValveIndex();
+        // get two valves
         auto valve1 = vertices[oldValveIndex];
-        connectValves(*valve1, valveIndex, flow);
-        //set parents
-        vertices[valveIndex]->setParentVertice(oldValveIndex);
+        int valve2Index = nextValveIndex();
+        if(valve1->isDisconnected()){
+            // after now it becomes connected
+            --disconnectedValves;
+        }
+
+        // connect + setparent
+        connectValves(*valve1, valve2Index, flow);
+        vertices[valve2Index]->setParentVertice(oldValveIndex);
     }
     //connect last valve with receiver
     int receiverIndex = receiverDistribution(generator);
     connectValves(*(vertices[valveIndex]), receiverIndex, flow);
     //connect receiver with t
     connectValves(*(vertices[receiverIndex]), graph.getTNumber(), flow);
-    //set white valves
+
+    // RESET COLORS
     while(vertices[valveIndex]->hasParent()){
         vertices[valveIndex]->setColor(WHITE);
         int tmpIndex = vertices[valveIndex]->getParentVertice();
@@ -69,12 +80,12 @@ void Generator::addAugmentingPath() {
 int Generator::nextValveIndex() {
     auto vertices = graph.getVertices();
     int valveIndex = valveDistribution(generator);
-    if (disconnectedValves > 0) {
-        while (vertices[valveIndex]->getEdgesCount() > 0 || vertices[valveIndex]->getColor() != WHITE) {
+    // if left disconnected then we search for disconnected, and it must be white
+    while ((disconnectedValves > 0 && vertices[valveIndex]->isConnected()) || vertices[valveIndex]->getColor() != WHITE) {
             valveIndex = valveDistribution(generator);
-        }
     }
 
+    // it is used by our augmenting path, so it should be grey
     graph.getVertices()[valveIndex]->setColor(GREY);
     return valveIndex;
 }
@@ -90,4 +101,42 @@ void Generator::connectValves(Vertice &valve1, int valve2Index, double flow) {
     }
     valve1.incrementCapacity(flow);
     valve2.incrementCapacity(flow);
+}
+
+double Generator::getMaxCapacity() {
+    double maxCapacity = 0;
+    for(auto v: graph.getVertices()){
+        if(v->getCapacity() > maxCapacity){
+            maxCapacity = v->getCapacity();
+        }
+        for(auto e: v->getEdges()){
+            if(e.second->getCapacity() > maxCapacity){
+                maxCapacity = e.second->getCapacity();
+            }
+        }
+    }
+    return maxCapacity;
+}
+
+void Generator::scaleCapacity(double maxCapacity){
+    for(auto v: graph.getVertices()){
+        v->scaleCapacity(maxCapacity);
+        for(auto e: v->getEdges()){
+            e.second->scaleCapacity(maxCapacity);
+        }
+    }
+}
+
+/*
+     (liczba źródeł) 2
+     (liczba zaworów) 2
+     (liczba punktów odbioru) 2
+     (w1) 3 c13 4 c14
+     (w2) 4 c24
+     (w3) c3 5 c35
+     (w4) c4 5 c45 6 c46
+ */
+bool Generator::saveGraph(std::ostream str) {
+    // TODO save graph
+    // str << graph.getSourceCount();
 }

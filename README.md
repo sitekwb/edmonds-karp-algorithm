@@ -23,7 +23,13 @@ Opracować algorytm, który dla danych nastaw zaworów określi ilość wody doc
 
 ## Opis konwencji dotyczących danych wejściowych i prezentacji wyników
 
-`//TODO`
+     (liczba źródeł) 2
+     (liczba zaworów) 2
+     (liczba punktów odbioru) 2
+     (w1) 3 c13 4 c14
+     (w2) 4 c24
+     (w3) c3 5 c35
+     (w4) c4 5 c45 6 c46
 
 ## Krótki opis metody rozwiązania, zastosowanych algorytmów i struktur danych
 

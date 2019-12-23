@@ -42,6 +42,13 @@ class Generator {
      void addAugmentingPath();
      int nextValveIndex();
      void connectValves(Vertice &valve1, int valve2Index, double flow);
+     double getMaxCapacity();
+     /**
+      * Goes through all graph and divides each capacity by maxCapacity
+      * Objective: all capacities scaled to 0-1
+      * @see #generateGraph
+      */
+     void scaleCapacity(double maxCapacity);
 public:
     Generator(int sourceCount, int valveCount, int receiverCount, int augmentingPathCount, double averageAugmentingPathLength, double augmentingPathLengthStandardDeviation);
     void generateGraph();

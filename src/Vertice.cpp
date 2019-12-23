@@ -80,3 +80,15 @@ bool Vertice::issetEdge(int vIndex) {
 void Vertice::incrementCapacity(double capacity) {
     Vertice::capacity += capacity;
 }
+
+void Vertice::scaleCapacity(double maxCapacity) {
+    capacity /= maxCapacity;
+}
+
+bool Vertice::isDisconnected() {
+    return !isConnected();
+}
+
+bool Vertice::isConnected() {
+    return getEdgesCount() > 0;
+}

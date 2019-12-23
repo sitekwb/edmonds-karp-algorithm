@@ -14,6 +14,7 @@ public:
     //        ---GETTERS & SETTERS---
     void setCapacity(double capacity);
     double getCapacity() const;
+    void scaleCapacity(double);
 
     void setReverseEdge(Edge *reverseEdge);
     Edge *getReverseEdge() const;

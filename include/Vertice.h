@@ -24,6 +24,7 @@ public:
     double getCapacity() const;
     void incrementCapacity(double capacity);
     void reduceCapacity(double capacity);
+    void scaleCapacity(double maxCapacity);
 
     Color getColor() const;
     void setColor(Color color);
@@ -33,6 +34,8 @@ public:
     bool hasParent();
 
     const std::unordered_map<int, Edge*> &getEdges() const;
+    bool isConnected();
+    bool isDisconnected();
 
     //   ---CONSTRUCTOR---
     explicit Vertice(double capacity);
