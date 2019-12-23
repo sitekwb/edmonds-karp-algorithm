@@ -17,6 +17,7 @@ public:
 private:
     std::vector<double>flows;
     int firstReceiverIndex;
+
     double currentFlow;
 
     Vertice &createInfiniteVertice();
@@ -32,6 +33,7 @@ public:
     Graph(int sourceCount, int valveCount, int receiverCount);
 
     void setFirstReceiverIndex(int firstReceiverIndex);
+    int getFirstReceiverIndex() const;
 
     const std::vector<double> &getFlows() const;
 
@@ -46,6 +48,10 @@ public:
     Edge *getEdge(int v1, int v2);
 
     Edge &createReverseEdge(int v_1, int v_2);
+
+    int getSourceCount();
+    int getValveCount();
+    int getReceiverCount();
 
 
 

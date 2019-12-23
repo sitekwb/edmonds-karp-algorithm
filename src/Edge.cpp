@@ -3,6 +3,7 @@
 //
 
 #include <Edge.h>
+#include <Vertice.h>
 
 #include "Edge.h"
 
@@ -28,5 +29,7 @@ void Edge::setCapacity(double capacity) {
 }
 
 void Edge::scaleCapacity(double maxCapacity) {
+    if(capacity != Vertice::infinity()) {
         capacity /= maxCapacity;
+    }
 }

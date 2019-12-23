@@ -227,6 +227,22 @@ Graph::Graph() {
     currentFlow = 0;
 }
 
+int Graph::getSourceCount() {
+    return vertices[0]->getEdgesCount();
+}
+
+int Graph::getValveCount() {
+    return firstReceiverIndex - getSourceCount();
+}
+
+int Graph::getReceiverCount() {
+    return vertices.size() - firstReceiverIndex - 1;
+}
+
+int Graph::getFirstReceiverIndex() const {
+    return firstReceiverIndex;
+}
+
 
 
 

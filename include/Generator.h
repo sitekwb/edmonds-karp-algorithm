@@ -8,6 +8,7 @@
 
 #include "Graph.h"
 #include <random>
+#include <ostream>
 
 
 class Generator {
@@ -52,7 +53,8 @@ class Generator {
 public:
     Generator(int sourceCount, int valveCount, int receiverCount, int augmentingPathCount, double averageAugmentingPathLength, double augmentingPathLengthStandardDeviation);
     void generateGraph();
-    bool saveGraph(std::ostream str);
+
+    friend std::ostream &operator<<(std::ostream &os, const Generator &generator);
 };
 
 

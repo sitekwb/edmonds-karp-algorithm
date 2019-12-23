@@ -106,11 +106,11 @@ void Generator::connectValves(Vertice &valve1, int valve2Index, double flow) {
 double Generator::getMaxCapacity() {
     double maxCapacity = 0;
     for(auto v: graph.getVertices()){
-        if(v->getCapacity() > maxCapacity){
+        if(v->getCapacity() != Vertice::infinity() && v->getCapacity() > maxCapacity){
             maxCapacity = v->getCapacity();
         }
         for(auto e: v->getEdges()){
-            if(e.second->getCapacity() > maxCapacity){
+            if(e.second->getCapacity() != Vertice::infinity() && e.second->getCapacity() > maxCapacity){
                 maxCapacity = e.second->getCapacity();
             }
         }
@@ -136,7 +136,31 @@ void Generator::scaleCapacity(double maxCapacity){
      (w3) c3 5 c35
      (w4) c4 5 c45 6 c46
  */
-bool Generator::saveGraph(std::ostream str) {
-    // TODO save graph
-    // str << graph.getSourceCount();
+ostream &operator<<(ostream &str, const Generator &generator) {
+    auto graph = generator.graph;
+    str << graph.getSourceCount()   << endl;
+    str << graph.getValveCount()    << endl;
+    str << graph.getReceiverCount() << endl;
+
+    auto firstValveIt = graph.getVertices().begin() + (graph.getSourceCount() + 1);
+    // SOURCES
+    for(auto sourceIt = graph.getVertices().begin() + 1; sourceIt != firstValveIt; ++sourceIt){
+        for(auto edge: (*sourceIt)->getEdges()){
+            str << edge.first << ' ' << edge.second->getCapacity() << ' ';
+            // it is allowed to push space at the end, because Controller#load_data gets all line and extracts it to stringstream
+        }
+        str << endl;
+    }
+
+    auto firstReceiverIt = graph.getVertices().begin() + graph.getFirstReceiverIndex();
+    // VALVES
+    for(auto valveIt = firstValveIt; valveIt != firstReceiverIt; ++valveIt){
+        str << (*valveIt)->getCapacity() << ' ';
+
+        for(auto edge: (*valveIt)->getEdges()){
+            str << edge.first << ' ' << edge.second->getCapacity() << ' ';
+        }
+        str << endl;
+    }
+    return str;
 }

@@ -82,7 +82,9 @@ void Vertice::incrementCapacity(double capacity) {
 }
 
 void Vertice::scaleCapacity(double maxCapacity) {
-    capacity /= maxCapacity;
+    if(capacity != Vertice::infinity()) {
+        capacity /= maxCapacity;
+    }
 }
 
 bool Vertice::isDisconnected() {
