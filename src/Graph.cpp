@@ -212,7 +212,7 @@ Graph::Graph(int sourceCount, int valveCount, int receiverCount) {
 
     createReceivers(firstReceiverIndex, receiverCount);
 
-    auto t = createT();
+    auto &t = createT();
 
     connectReceiversWithT(t, firstReceiverIndex, 0);
 

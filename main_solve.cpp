@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     try{
-        auto controller = new Controller;
+        Controller controller;
 
         if(argc != 2){
             throw invalid_argument("Required one argument. Given "+to_string(argc-1)+".");
@@ -17,17 +17,15 @@ int main(int argc, char *argv[]) {
         fstream file_stream(argv[1], fstream::in);
         file_stream.exceptions ( ifstream::failbit | ifstream::badbit );
 
-        controller->load_data(file_stream);
+        controller.load_data(file_stream);
 
         file_stream.close();
 
-        while(controller->exists_augmenting_path()) {
-            controller->synchronize_flow_and_graph();
+        while(controller.exists_augmenting_path()) {
+            controller.synchronize_flow_and_graph();
         }
 
-        controller->output_results(cout);
-
-        delete controller;
+        controller.output_results(cout);
     }
     catch (exception &e) {
         cerr << e.what();

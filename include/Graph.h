@@ -74,8 +74,8 @@ public:
     void synchronizeFlowAndGraph();
 
     virtual ~Graph(){
-        for(auto v: vertices){
-            delete v;
+        for(auto it = vertices.begin(); it != vertices.end(); ++it){
+            delete *it;
         }
     }
 

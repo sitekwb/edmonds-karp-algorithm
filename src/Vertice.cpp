@@ -68,13 +68,7 @@ int Vertice::getEdgesCount() {
 }
 
 bool Vertice::issetEdge(int vIndex) {
-    try {
-        edges.at(vIndex);
-    }
-    catch(std::out_of_range &e){
-        return false;
-    }
-    return true;
+    return edges.find(vIndex) != edges.cend();
 }
 
 void Vertice::incrementCapacity(double capacity) {

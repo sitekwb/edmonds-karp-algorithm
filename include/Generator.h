@@ -20,7 +20,7 @@ class Generator {
     /**
      * Input parameters of generator
      */
-    int sourceCount, valveCount, receiverCount, augmentingPathCount;
+    int sourceCount, valveCount, receiverCount, augmentingPathCount, disconnectedValveIndex;
 
     std::default_random_engine generator;
     std::normal_distribution<double> augmentingPathDistribution;
@@ -28,7 +28,6 @@ class Generator {
     std::uniform_int_distribution<int> sourceDistribution;
     std::uniform_int_distribution<int> valveDistribution;
     std::uniform_int_distribution<int> receiverDistribution;
-
     /**
      * Count of disconnected valves needed to make graph connected in the end
      */
@@ -54,7 +53,7 @@ public:
     Generator(int sourceCount, int valveCount, int receiverCount, int augmentingPathCount, double averageAugmentingPathLength, double augmentingPathLengthStandardDeviation);
     void generateGraph();
 
-    friend std::ostream &operator<<(std::ostream &os, const Generator &generator);
+    friend std::ostream &operator<<(std::ostream &str, const Generator &generator);
 };
 
 

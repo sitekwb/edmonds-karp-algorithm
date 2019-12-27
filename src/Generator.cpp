@@ -8,17 +8,17 @@ using namespace std;
 Generator::Generator(int _sourceCount, int _valveCount, int _receiverCount, int _augmentingPathCount,
                      double _averageAugmentingPathLength, double _augmentingPathLengthStandardDeviation)
         : sourceCount(_sourceCount), valveCount(_valveCount), receiverCount(_receiverCount),
-          augmentingPathCount(_augmentingPathCount) {
-    disconnectedValves = _valveCount;
+          augmentingPathCount(_augmentingPathCount),
+          graph(_sourceCount, _valveCount, _receiverCount) {
 
-    graph = Graph(sourceCount, valveCount, receiverCount);
+    disconnectedValves = _valveCount;
 
     augmentingPathDistribution = normal_distribution<double>(_averageAugmentingPathLength,
                                                              _augmentingPathLengthStandardDeviation);
     sourceDistribution = uniform_int_distribution<int>(1, sourceCount);
     flowDistribution = uniform_real_distribution<double>(0, 1);
     valveDistribution = uniform_int_distribution<int>(1 + sourceCount, sourceCount + valveCount);
-    valveDistribution = uniform_int_distribution<int>(sourceCount + valveCount + 1, graph.getSize() - 2);
+    receiverDistribution = uniform_int_distribution<int>(sourceCount + valveCount + 1, graph.getSize() - 2);
 
 }
 
@@ -52,15 +52,11 @@ void Generator::addAugmentingPath() {
     for (int oldValveIndex = valveIndex; augmentingPathLength > 0; --augmentingPathLength, oldValveIndex = valveIndex) {
         // get two valves
         auto valve1 = vertices[oldValveIndex];
-        int valve2Index = nextValveIndex();
-        if(valve1->isDisconnected()){
-            // after now it becomes connected
-            --disconnectedValves;
-        }
+        valveIndex = nextValveIndex();
 
         // connect + setparent
-        connectValves(*valve1, valve2Index, flow);
-        vertices[valve2Index]->setParentVertice(oldValveIndex);
+        connectValves(*valve1, valveIndex, flow);
+        vertices[valveIndex]->setParentVertice(oldValveIndex);
     }
     //connect last valve with receiver
     int receiverIndex = receiverDistribution(generator);
@@ -69,7 +65,7 @@ void Generator::addAugmentingPath() {
     connectValves(*(vertices[receiverIndex]), graph.getTNumber(), flow);
 
     // RESET COLORS
-    while(vertices[valveIndex]->hasParent()){
+    while(valveIndex != Vertice::noParent()){
         vertices[valveIndex]->setColor(WHITE);
         int tmpIndex = vertices[valveIndex]->getParentVertice();
         vertices[valveIndex]->setParentVertice(Vertice::noParent());
@@ -79,10 +75,19 @@ void Generator::addAugmentingPath() {
 
 int Generator::nextValveIndex() {
     auto vertices = graph.getVertices();
-    int valveIndex = valveDistribution(generator);
+    int valveIndex = disconnectedValveIndex;
     // if left disconnected then we search for disconnected, and it must be white
-    while ((disconnectedValves > 0 && vertices[valveIndex]->isConnected()) || vertices[valveIndex]->getColor() != WHITE) {
+    if(disconnectedValves > 0){
+        --disconnectedValves;
+        while(vertices[valveIndex]->isConnected() || vertices[valveIndex]->getColor() != WHITE){
+            ++valveIndex;
+        }
+        disconnectedValveIndex = valveIndex + 1;
+    }
+    else {
+        do {
             valveIndex = valveDistribution(generator);
+        } while (vertices[valveIndex]->getColor() != WHITE);
     }
 
     // it is used by our augmenting path, so it should be grey
@@ -92,7 +97,7 @@ int Generator::nextValveIndex() {
 
 void Generator::connectValves(Vertice &valve1, int valve2Index, double flow) {
     auto vertices = graph.getVertices();
-    auto valve2 = *(vertices[valve2Index]);
+    auto &valve2 = *(vertices[valve2Index]);
     if (valve1.issetEdge(valve2Index)) {
         auto edge = valve1[valve2Index];
         edge.setCapacity(edge.getCapacity() + flow);
@@ -138,9 +143,9 @@ void Generator::scaleCapacity(double maxCapacity){
  */
 ostream &operator<<(ostream &str, const Generator &generator) {
     auto graph = generator.graph;
-    str << graph.getSourceCount()   << endl;
-    str << graph.getValveCount()    << endl;
-    str << graph.getReceiverCount() << endl;
+    str << generator.sourceCount   << endl;
+    str << generator.valveCount    << endl;
+    str << generator.receiverCount << endl;
 
     auto firstValveIt = graph.getVertices().begin() + (graph.getSourceCount() + 1);
     // SOURCES

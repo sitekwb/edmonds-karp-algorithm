@@ -8,4 +8,5 @@ include_directories(include)
 file(GLOB SOURCES "src/*.cpp")
 set(SOURCES ${SOURCES})
 
-add_executable(aal_graphs main.cpp ${SOURCES})
+add_executable(solve main_solve.cpp ${SOURCES})
+add_executable(generate main_generate.cpp ${SOURCES})
