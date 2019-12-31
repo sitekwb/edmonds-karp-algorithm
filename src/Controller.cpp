@@ -7,6 +7,8 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <cstdlib>
+#include <fstream>
 
 using namespace std;
 
@@ -20,7 +22,7 @@ using namespace std;
      * (w3) c3 5 c35
      * (w4) c4 5 c45 6 c46
 */
-void Controller::load_data(std::istream &stream) {
+void Controller::loadData(std::istream &stream) {
     int sourceCount;
     stream >> sourceCount;
 
@@ -34,7 +36,7 @@ void Controller::load_data(std::istream &stream) {
         throw exception();
     }
 
-    graph.createS();
+    graph->createS();
 
     //go to new line
     string str;
@@ -49,50 +51,97 @@ void Controller::load_data(std::istream &stream) {
         double capacity;
         ss >> capacity;
 
-        Vertice *vertice;
-        if (i < sourceCount) {
-            vertice = &graph.createSource(capacity);
-        } else {
-            vertice = new Vertice(capacity);
-            graph.addVertice(*vertice);
-        }
+        auto vertice = graph->createVertice(capacity, i >= sourceCount);
 
         int verticeNumber;
         double edgeCapacity;
-
         while ((ss >> verticeNumber && ss >> edgeCapacity) || !ss.eof()) {
             vertice->createEdge(verticeNumber, edgeCapacity);
         }
     }
 
     int firstReceiverIndex = sourceCount + valveCount + 1;
-    graph.setFirstReceiverIndex(firstReceiverIndex);
+    graph->setFirstReceiverIndex(firstReceiverIndex);
 
-    graph.createReceivers(firstReceiverIndex, receiversCount);
+    graph->createReceivers(firstReceiverIndex, receiversCount);
 
-    auto t = graph.createT();
+    graph->createT();
 
-    graph.connectReceiversWithT(t, firstReceiverIndex);
+    graph->connectReceiversWithT(firstReceiverIndex);
 
-    graph.createReverseEdges();
+    graph->createReverseEdges();
 
-    graph.createReceiversFlows(receiversCount);
+    graph->createReceiversFlows(receiversCount);
 }
 
-bool Controller::exists_augmenting_path() {
-    return graph.searchAugmentingPath();
+bool Controller::existsAugmentingPath() {
+    return graph->searchAugmentingPath();
 }
 
-void Controller::synchronize_flow_and_graph() {
-    graph.synchronizeFlowAndGraph();
+void Controller::synchronizeFlowAndGraph() {
+    graph->synchronizeFlowAndGraph();
 }
 
-void Controller::output_results(ostream &stream) {
-    int i = 0;
-    double flowSum = 0;
-    for (auto flow: graph.getFlows()) {
-        stream << setw(3) << ++i << ": " << flow << endl;
-        flowSum += flow;
+// print stats
+ostream &operator<<(ostream &str, const Controller &controller) {
+    str << controller.getGraph();
+    return str;
+}
+
+void Controller::compareResults(istream &originalResultsFileStream) {
+    stringstream results;
+    results << *this;
+
+    while(!originalResultsFileStream.eof()){
+        string originalWord, word;
+        originalResultsFileStream >> originalWord;
+        results >> word;
+        double originalValue = 1, value = 1;
+        try{
+            originalValue = stod(originalWord);
+            value = stod(word);
+
+            double error = (originalValue == 0) ? (value - originalValue) : (value - originalValue)/originalValue;
+            if(error > 0.01){
+                cout << "Blad przekroczyl 1%. Wynosi " << error*100 << "%." << endl;
+                break;
+            }
+        }
+        catch(invalid_argument &e){
+            // if it is not double then do nothing
+        }
     }
-    stream << "FLOW SUM = " << flowSum << endl;
+}
+
+
+Controller::Controller(std::shared_ptr<Graph> graph) : graph(graph) {
+    graph->createReverseEdges();
+}
+
+Controller::Controller() : graph(std::make_shared<Graph>()){
+
+}
+
+long long Controller::solve(bool debug) {
+    if(debug) {
+        int i = 1;
+        while (existsAugmentingPath()) {
+            synchronizeFlowAndGraph();
+            if (i % 10 == 0) {
+                cout << "Augmenting path no. " << i << endl;
+            }
+            i++;
+        }
+        return 0;
+    }
+    auto t1 = std::chrono::steady_clock::now();
+    while (existsAugmentingPath()) {
+        synchronizeFlowAndGraph();
+    }
+    auto t2 = std::chrono::steady_clock::now();
+    return (t2 - t1).count();
+}
+
+const shared_ptr<Graph> &Controller::getGraph() const {
+    return graph;
 }

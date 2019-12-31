@@ -13,7 +13,7 @@ class Vertice {
     double capacity;
     Color color;
     int parentVertice;
-    std::unordered_map<int, Edge*> edges;
+    std::unordered_map<int, std::shared_ptr<Edge>> edges;
 
 public:
     //   ---STATIC METHODS---
@@ -21,19 +21,19 @@ public:
     static int noParent();
 
     //   ---GETTERS & SETTERS---
-    double getCapacity() const;
+    [[nodiscard]] double getCapacity() const;
     void incrementCapacity(double capacity);
     void reduceCapacity(double capacity);
     void scaleCapacity(double maxCapacity);
 
-    Color getColor() const;
+    [[nodiscard]] Color getColor() const;
     void setColor(Color color);
 
-    int getParentVertice() const;
+    [[nodiscard]] int getParentVertice() const;
     void setParentVertice(int parentVertice);
     bool hasParent();
 
-    const std::unordered_map<int, Edge*> &getEdges() const;
+    [[nodiscard]] const std::unordered_map<int, std::shared_ptr<Edge>> &getEdges() const;
     bool isConnected();
     bool isDisconnected();
 
@@ -41,18 +41,16 @@ public:
     explicit Vertice(double capacity);
 
     //   ---METHODS---
-    Edge &createEdge(int verticeNumber, double edgeCapacity);
+    std::shared_ptr<Edge> createEdge(int verticeNumber, double edgeCapacity);
     int getEdgesCount();
     bool issetEdge(int vIndex);
 
     //   ---OPERATORS---
-    Edge &operator[](int v_2);
+    std::shared_ptr<Edge> operator[](int v_2);
 
     //   ---DESTRUCTOR---
     virtual ~Vertice(){
-        for(auto e: edges){
-            delete e.second;
-        }
+        edges.clear();
     }
 };
 

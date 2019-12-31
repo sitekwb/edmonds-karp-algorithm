@@ -15,7 +15,7 @@ class Generator {
     /**
      * Graph built by generator
      */
-    Graph graph;
+    std::shared_ptr<Graph> graph;
 
     /**
      * Input parameters of generator
@@ -41,7 +41,7 @@ class Generator {
       */
      void addAugmentingPath();
      int nextValveIndex();
-     void connectValves(Vertice &valve1, int valve2Index, double flow);
+     void connectValves(std::shared_ptr<Vertice> valve1, int valve2Index, double flow);
      double getMaxCapacity();
      /**
       * Goes through all graph and divides each capacity by maxCapacity
@@ -52,6 +52,8 @@ class Generator {
 public:
     Generator(int sourceCount, int valveCount, int receiverCount, int augmentingPathCount, double averageAugmentingPathLength, double augmentingPathLengthStandardDeviation);
     void generateGraph();
+
+    [[nodiscard]] const std::shared_ptr<Graph> &getGraph() const;
 
     friend std::ostream &operator<<(std::ostream &str, const Generator &generator);
 };

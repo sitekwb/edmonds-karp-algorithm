@@ -1,6 +1,7 @@
 #include "Controller.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -10,26 +11,42 @@ int main(int argc, char *argv[]) {
     try{
         Controller controller;
 
-        if(argc != 2){
-            throw invalid_argument("Required one argument. Given "+to_string(argc-1)+".");
+        if(argc > 5 || argc < 3){
+            throw invalid_argument("Required from two to four arguments (input_file, stats_file, [original_results_file, results_file]). Given "+to_string(argc-1)+".");
         }
 
-        fstream file_stream(argv[1], fstream::in);
-        file_stream.exceptions ( ifstream::failbit | ifstream::badbit );
+        // load data
+        ifstream inputFileStream(argv[1]);
+        inputFileStream.exceptions (ifstream::failbit | ifstream::badbit );
+        controller.loadData(inputFileStream);
+        inputFileStream.close();
+        cout << "Data loaded" << endl;
 
-        controller.load_data(file_stream);
+        // solve graph
+        controller.solve();
+        cout << "Graph solved";
 
-        file_stream.close();
-
-        while(controller.exists_augmenting_path()) {
-            controller.synchronize_flow_and_graph();
+        // compare with original results
+        if(argc >= 4) {
+            ifstream originalResultsFileStream(argv[3]);
+            controller.compareResults(originalResultsFileStream);
+            originalResultsFileStream.close();
+            cout << "Compared with original results";
         }
 
-        controller.output_results(cout);
+        // save results to file
+        if(argc == 5){
+            ofstream resultsFileStream(argv[4]);
+            resultsFileStream << controller.getGraph();
+            resultsFileStream.close();
+            cout << "Results saved";
+        }
+
+        cout << controller.getGraph();
     }
     catch (exception &e) {
-        cerr << e.what();
-        return -1;
+        cout << e.what();
+        return 1;
     }
 
     return 0;

@@ -12,11 +12,11 @@ Edge::Edge(double capacity){
     this->reverseEdge = nullptr;
 }
 
-Edge *Edge::getReverseEdge() const {
+std::shared_ptr<Edge> Edge::getReverseEdge() const {
     return reverseEdge;
 }
 
-void Edge::setReverseEdge(Edge *reverseEdge) {
+void Edge::setReverseEdge(std::shared_ptr<Edge> reverseEdge) {
     this->reverseEdge = reverseEdge;
 }
 

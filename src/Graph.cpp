@@ -4,27 +4,30 @@
 
 #include <queue>
 #include "Graph.h"
+#include <memory>
+#include <iomanip>
+#include <exception>
 
-Vertice &Graph::addVertice(Vertice &vertice) {
-    vertices.push_back(&vertice);
+std::shared_ptr<Vertice> Graph::addVertice(std::shared_ptr<Vertice> vertice) {
+    vertices.push_back(vertice);
     return vertice;
 }
 
-Vertice &Graph::createInfiniteVertice(){
-    auto v = new Vertice(Vertice::infinity());
+std::shared_ptr<Vertice> Graph::createInfiniteVertice(){
+    auto v = std::make_shared<Vertice>(Vertice::infinity());
     vertices.push_back(v);
-    return *v;
+    return v;
 }
 
-Vertice &Graph::createS() {
+std::shared_ptr<Vertice> Graph::createS() {
     return createInfiniteVertice();
 }
 
-Vertice &Graph::createT() {
+std::shared_ptr<Vertice> Graph::createT() {
     return createInfiniteVertice();
 }
 
-void Graph::connectReceiversWithT(Vertice &t, int first_receiver_index, double flow) {
+void Graph::connectReceiversWithT(int first_receiver_index, double flow) {
     for(int i=first_receiver_index; i < vertices.size() - 1; ++i){
         connect(i, getTNumber(), flow, false);
     }
@@ -34,7 +37,8 @@ void Graph::createReverseEdges() {
     //go through all vertices without s and t
     for(int vNum=0; vNum < vertices.size(); ++vNum){
         auto v = vertices[vNum];
-        for(auto e: v->getEdges()){
+        for(const auto& e: v->getEdges()){
+            ++edgesCount;
             if(!e.second->getReverseEdge()){
                 createReverseEdge(vNum, e.first);
             }
@@ -42,22 +46,23 @@ void Graph::createReverseEdges() {
     }
 }
 
-Edge &Graph::connect(int v_1, int v_2, double edgeCapacity, bool reverseEdge) {
-    auto &edge = (*vertices[v_1]).createEdge(v_2, edgeCapacity);
+std::shared_ptr<Edge> Graph::connect(int v_1, int v_2, double edgeCapacity, bool reverseEdge) {
+    auto edge = (*vertices[v_1]).createEdge(v_2, edgeCapacity);
     if(reverseEdge){
         createReverseEdge(v_1, v_2);
     }
     return edge;
 }
 
+std::shared_ptr<Vertice> Graph::createValve(double capacity){
+    return addVertice(std::make_shared<Vertice>(capacity));
+}
 
 
-
-Vertice &Graph::createSource(double capacity) {
-    auto &source = addVertice(*new Vertice(capacity));
+std::shared_ptr<Vertice> Graph::createSource(double capacity) {
+    auto source = addVertice(std::make_shared<Vertice>(capacity));
 
     // connect with s
-    auto &s = *(vertices[0]);
     int sourceNumber = getSize()-1;
     int sNumber = 0;
     connect(sNumber, sourceNumber, Vertice::infinity(), false);
@@ -65,12 +70,12 @@ Vertice &Graph::createSource(double capacity) {
     return source;
 }
 
-Edge &Graph::createReverseEdge(int v_1, int v_2) {
-    Edge &edge = (*vertices[v_1])[v_2];
-    Edge &reverseEdge = vertices[v_2]->createEdge(v_1, 0);
+std::shared_ptr<Edge> Graph::createReverseEdge(int v_1, int v_2) {
+    auto edge = (*vertices[v_1])[v_2];
+    auto reverseEdge = vertices[v_2]->createEdge(v_1, 0);
 
-    reverseEdge.setReverseEdge(&edge);
-    edge.setReverseEdge(&reverseEdge);
+    reverseEdge->setReverseEdge(edge);
+    edge->setReverseEdge(reverseEdge);
     return reverseEdge;
 }
 
@@ -119,20 +124,20 @@ const std::vector<double> &Graph::getFlows() const {
         kolor[u] = CZARNY
 */
 bool Graph::searchAugmentingPath() {
-    for(auto u: vertices){
+    for(const auto& u: vertices){
         u->setColor(WHITE);
         u->setParentVertice(Vertice::noParent());
     }
-    auto &s = getS();
-    s.setColor(GREY);
+    auto s = getS();
+    s->setColor(GREY);
 
-    std::queue<std::pair<int, Vertice *>>queue;
-    queue.push({0, &s});
+    std::queue<std::pair<int, std::shared_ptr<Vertice>>>queue;
+    queue.push({0, s});
 
     while(!queue.empty()){
         auto u = queue.front();
         queue.pop();
-        for(auto edge: u.second->getEdges()){
+        for(const auto& edge: u.second->getEdges()){
             auto v = std::make_pair(edge.first, vertices[edge.first]);
             if(edge.second->getCapacity() == 0 || v.second->getCapacity() == 0){
                 continue;
@@ -161,23 +166,23 @@ bool Graph::searchAugmentingPath() {
     return v == 0;
 }
 
-Vertice &Graph::getS() {
-    return *(vertices[0]);
+std::shared_ptr<Vertice> Graph::getS() {
+    return vertices[0];
 }
 
-Edge *Graph::getEdge(int v1, int v2) {
-    return &(*vertices[v1])[v2];
+std::shared_ptr<Edge> Graph::getEdge(int v1, int v2) {
+    return (*vertices[v1])[v2];
 }
 
 void Graph::synchronizeFlowAndGraph() {
     int v_num = getTNumber();
     do{
         int v_parent = vertices[v_num]->getParentVertice();
-        auto &edge = (*vertices[v_parent])[v_num];
+        auto edge = (*vertices[v_parent])[v_num];
 
         vertices[v_num]->reduceCapacity(currentFlow);
-        edge.setCapacity(edge.getCapacity() - currentFlow);
-        edge.getReverseEdge()->setCapacity(edge.getCapacity() + currentFlow);
+        edge->setCapacity(edge->getCapacity() - currentFlow);
+        edge->getReverseEdge()->setCapacity(edge->getCapacity() + currentFlow);
 
         v_num = v_parent;
     }while(v_num != 0);
@@ -205,20 +210,21 @@ Graph::Graph(int sourceCount, int valveCount, int receiverCount) {
     }
 
     for(int i=0; i<valveCount; ++i){
-        addVertice(*(new Vertice(0)));
+        addVertice(std::make_shared<Vertice>(0));
     }
 
     firstReceiverIndex = sourceCount + valveCount + 1;
 
     createReceivers(firstReceiverIndex, receiverCount);
 
-    auto &t = createT();
+    createT();
 
-    connectReceiversWithT(t, firstReceiverIndex, 0);
+    connectReceiversWithT(firstReceiverIndex, 0);
 
+    flows.resize(receiverCount);
 }
 
-const std::vector<Vertice *> &Graph::getVertices() const {
+const std::vector<std::shared_ptr<Vertice>> &Graph::getVertices() const {
     return vertices;
 }
 
@@ -241,6 +247,44 @@ int Graph::getReceiverCount() {
 
 int Graph::getFirstReceiverIndex() const {
     return firstReceiverIndex;
+}
+
+std::shared_ptr<Vertice> Graph::createVertice(double capacity, bool isValve) {
+    return (isValve) ? createValve(capacity) : createSource(capacity);
+}
+
+void Graph::incrementFlow(int index, double value) {
+    if(index < 0 || index >= flows.size()){
+        throw std::out_of_range("increment flow exception with index="+std::to_string(index)+" and flow.size()="+std::to_string(flows.size()));
+    }
+    flows[index] += value;
+}
+
+void Graph::incrementCurrentFlow(double value) {
+    currentFlow += value;
+}
+
+std::ostream &operator<<(std::ostream &stream, const Graph &graph) {
+    int i = 0;
+    double flowSum = 0;
+    for (auto flow: graph.getFlows()) {
+        stream << std::setw(3) << ++i << ": " << flow << std::endl;
+        flowSum += flow;
+    }
+    stream << "SUM: " << flowSum << std::endl;
+
+    return stream;
+}
+
+void Graph::scaleFlows(double maxCapacity) {
+    for(double &flow: flows){
+        flow /= maxCapacity;
+    }
+    currentFlow /= maxCapacity;
+}
+
+int Graph::getEdgesCount() const {
+    return edgesCount;
 }
 
 

@@ -8,16 +8,24 @@
 #include "Graph.h"
 #include "Vertice.h"
 #include <forward_list>
+#include <ostream>
+#include <chrono>
+#include <fstream>
 
 class Controller {
-    Graph graph;
-
+    std::shared_ptr<Graph> graph;
 public:
+    Controller();
+    explicit Controller(std::shared_ptr<Graph> graph);
     ///   ---METHODS---
-    void load_data(std::istream &stream);
-    bool exists_augmenting_path();
-    void synchronize_flow_and_graph();
-    void output_results(std::ostream &stream);
+    long long solve(bool debug = false);
+    [[nodiscard]] const std::shared_ptr<Graph> &getGraph() const;
+    void loadData(std::istream &stream);
+    bool existsAugmentingPath();
+    void synchronizeFlowAndGraph();
+    void compareResults(std::istream &);
+
+    friend std::ostream &operator<<(std::ostream &os, const Controller &controller);
 
     ///   ---DESTRUCTOR---
     virtual ~Controller() {}
