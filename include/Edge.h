@@ -1,7 +1,3 @@
-//
-// Created by Wojciech Sitek on 17/11/2019.
-//
-
 #ifndef AAL_GRAPHS_EDGE_H
 #define AAL_GRAPHS_EDGE_H
 

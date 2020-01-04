@@ -1,7 +1,3 @@
-//
-// Created by Wojtek on 17/11/2019.
-//
-
 #include "Vertice.h"
 
 using namespace std;

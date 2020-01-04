@@ -1,6 +1,3 @@
-//
-// Created by Wojtek on 30/11/2019.
-//
 #include <Generator.h>
 #include <iostream>
 #include <iomanip>

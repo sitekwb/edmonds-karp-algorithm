@@ -1,7 +1,3 @@
-//
-// Created by Wojtek on 19/11/2019.
-//
-
 #include <Edge.h>
 #include <Vertice.h>
 

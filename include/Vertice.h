@@ -1,7 +1,3 @@
-//
-// Created by Wojtek on 17/11/2019.
-//
-
 #ifndef AAL_GRAPHS_VERTICE_H
 #define AAL_GRAPHS_VERTICE_H
 

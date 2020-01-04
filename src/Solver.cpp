@@ -1,7 +1,3 @@
-//
-// Created by Wojtek on 15/11/2019.
-//
-
 #include "Solver.h"
 #include <iostream>
 #include <string>

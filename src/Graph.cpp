@@ -1,7 +1,3 @@
-//
-// Created by Wojtek on 17/11/2019.
-//
-
 #include <queue>
 #include "Graph.h"
 #include <memory>
