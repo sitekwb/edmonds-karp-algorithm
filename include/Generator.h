@@ -31,30 +31,41 @@ class Generator {
     /**
      * Count of disconnected valves needed to make graph connected in the end
      */
-     int disconnectedValves;
+    int disconnectedValves;
 
-     /**
-      * Adds one augmenting path
-      * @see Generator#augmentingPathCount lowered by 1
-      * @see Generator#disconnectedValves lowered
-      * @see Generator#graph updated
-      */
-     void addAugmentingPath();
-     int nextValveIndex();
-     void connectValves(std::shared_ptr<Vertice> valve1, int valve2Index, double flow);
-     double getMaxCapacity();
-     /**
-      * Goes through all graph and divides each capacity by maxCapacity
-      * Objective: all capacities scaled to 0-1
-      * @see #generateGraph
-      */
-     void scaleCapacity(double maxCapacity);
+    /**
+     * Adds one augmenting path
+     * @see Generator#augmentingPathCount lowered by 1
+     * @see Generator#disconnectedValves lowered
+     * @see Generator#graph updated
+     */
+    void addAugmentingPath();
+
+    int nextValveIndex();
+
+    void connectValves(std::shared_ptr<Vertice> valve1, int valve2Index, double flow);
+
+    double getMaxCapacity();
+
+    /**
+     * Goes through all graph and divides each capacity by maxCapacity
+     * Objective: all capacities scaled to 0-1
+     * @see #generateGraph
+     */
+    void scaleCapacity(double maxCapacity);
+
 public:
-    Generator(int sourceCount, int valveCount, int receiverCount, int augmentingPathCount, double averageAugmentingPathLength, double augmentingPathLengthStandardDeviation);
+    /// Constructor - makes empty graph & initializes random generators
+    Generator(int sourceCount, int valveCount, int receiverCount, int augmentingPathCount,
+              double averageAugmentingPathLength, double augmentingPathLengthStandardDeviation);
+
+    /// Generates graph on base of data given in constructor
     void generateGraph();
 
-    [[nodiscard]] const std::shared_ptr<Graph> &getGraph() const;
+    /// Getter for graph
+    [[nodiscard]] const std::shared_ptr<Graph> getGraph() const;
 
+    /// Prints original results
     friend std::ostream &operator<<(std::ostream &str, const Generator &generator);
 };
 

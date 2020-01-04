@@ -1,4 +1,4 @@
-#include "Controller.h"
+#include "Solver.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,40 +9,29 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     try{
-        Controller controller;
+        Solver solver;
 
-        if(argc > 5 || argc < 3){
-            throw invalid_argument("Required from two to four arguments (input_file, stats_file, [original_results_file, results_file]). Given "+to_string(argc-1)+".");
+        if(argc > 2){
+            throw invalid_argument("Required 0 or 1 argument [results_file]. Given "+to_string(argc-1)+".");
         }
 
         // load data
-        ifstream inputFileStream(argv[1]);
-        inputFileStream.exceptions (ifstream::failbit | ifstream::badbit );
-        controller.loadData(inputFileStream);
-        inputFileStream.close();
+        solver.loadData(cin);
         cout << "Data loaded" << endl;
 
         // solve graph
-        controller.solve();
-        cout << "Graph solved";
-
-        // compare with original results
-        if(argc >= 4) {
-            ifstream originalResultsFileStream(argv[3]);
-            controller.compareResults(originalResultsFileStream);
-            originalResultsFileStream.close();
-            cout << "Compared with original results";
-        }
+        auto time = solver.solve();
+        cout << "Graph solved with time " << time << endl;
 
         // save results to file
-        if(argc == 5){
-            ofstream resultsFileStream(argv[4]);
-            resultsFileStream << controller.getGraph();
+        if(argc == 2){
+            ofstream resultsFileStream(argv[1]);
+            resultsFileStream << *solver.getGraph();
             resultsFileStream.close();
-            cout << "Results saved";
+            cout << "Results saved" << endl;
         }
-
-        cout << controller.getGraph();
+        cout << "RESULTS: " << endl;
+        cout << *solver.getGraph();
     }
     catch (exception &e) {
         cout << e.what();

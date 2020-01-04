@@ -5,7 +5,8 @@
 #ifndef AAL_GRAPHS_COLOR_H
 #define AAL_GRAPHS_COLOR_H
 
-enum Color{
+/// Edge color
+enum Color {
     WHITE,
     GREY,
     BLACK

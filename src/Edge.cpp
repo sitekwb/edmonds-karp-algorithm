@@ -7,7 +7,7 @@
 
 #include "Edge.h"
 
-Edge::Edge(double capacity){
+Edge::Edge(double capacity) {
     this->capacity = capacity;
     this->reverseEdge = nullptr;
 }
@@ -29,7 +29,7 @@ void Edge::setCapacity(double capacity) {
 }
 
 void Edge::scaleCapacity(double maxCapacity) {
-    if(capacity != Vertice::infinity()) {
+    if (capacity != Vertice::infinity()) {
         capacity /= maxCapacity;
     }
 }

@@ -2,7 +2,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
-#include "Controller.h"
+#include "Solver.h"
 #include "Generator.h"
 #include <iomanip>
 
@@ -10,10 +10,14 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     try{
-        ofstream fs("stats.txt");
+        if(argc != 4){
+            throw invalid_argument("Required 3 arguments (outputFile, startValveCount, iterationCount). Given "+to_string(argc-1)+". Preferred values: valve_profiler_stats.txt 1000 5000");
+        }
 
-        int valveCount = 1000;
-        for(int i=1; i<=1000; ++i, valveCount+=1000) {
+        ofstream fs(argv[1]);
+
+        int valveCount = atoi(argv[2]);
+        for(int i=1; i <= atoi(argv[3]); ++i, valveCount+=1000) {
             int sourceCount = valveCount/100;
             int receiverCount = valveCount/100;
             int augmentingPathCount = valveCount/i/10;
@@ -23,7 +27,7 @@ int main(int argc, char *argv[]) {
             Generator generator(sourceCount, valveCount, receiverCount, augmentingPathCount,
                                 averageAugmentingPathLength, augmentingPathLengthStandardDeviation);
             generator.generateGraph();
-            Controller controller(generator.getGraph());
+            Solver controller(generator.getGraph());
             auto time = controller.solve();
             fs   << valveCount << ';' << controller.getGraph()->getEdgesCount() << ';' << time << endl;
             cout << setw(6) << valveCount << ';' << setw(6) << controller.getGraph()->getEdgesCount() << ';' << setw(12) << time << endl;

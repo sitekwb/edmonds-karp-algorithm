@@ -45,7 +45,6 @@ void Generator::generateGraph() {
 }
 
 
-
 void Generator::addAugmentingPath() {
     // RANDOM GENERATION
     int augmentingPathLength = (int) augmentingPathDistribution(generator);
@@ -80,7 +79,7 @@ void Generator::addAugmentingPath() {
     graph->incrementCurrentFlow(flow);
 
     // RESET COLORS
-    while(valveIndex != Vertice::noParent()){
+    while (valveIndex != Vertice::noParent()) {
         vertices[valveIndex]->setColor(WHITE);
         int tmpIndex = vertices[valveIndex]->getParentVertice();
         vertices[valveIndex]->setParentVertice(Vertice::noParent());
@@ -92,14 +91,13 @@ int Generator::nextValveIndex() {
     auto vertices = graph->getVertices();
     int valveIndex = disconnectedValveIndex;
     // if left disconnected then we search for disconnected, and it must be white
-    if(disconnectedValves > 0){
+    if (disconnectedValves > 0) {
         --disconnectedValves;
-        while(vertices[valveIndex]->isConnected() || vertices[valveIndex]->getColor() != WHITE){
+        while (vertices[valveIndex]->isConnected() || vertices[valveIndex]->getColor() != WHITE) {
             ++valveIndex;
         }
         disconnectedValveIndex = valveIndex + 1;
-    }
-    else {
+    } else {
         do {
             valveIndex = valveDistribution(generator);
         } while (vertices[valveIndex]->getColor() != WHITE);
@@ -125,12 +123,12 @@ void Generator::connectValves(std::shared_ptr<Vertice> valve1, int valve2Index, 
 
 double Generator::getMaxCapacity() {
     double maxCapacity = 0;
-    for(auto const &v: graph->getVertices()){
-        if(v->getCapacity() != Vertice::infinity() && v->getCapacity() > maxCapacity){
+    for (auto const &v: graph->getVertices()) {
+        if (v->getCapacity() != Vertice::infinity() && v->getCapacity() > maxCapacity) {
             maxCapacity = v->getCapacity();
         }
-        for(auto const &e: v->getEdges()){
-            if(e.second->getCapacity() != Vertice::infinity() && e.second->getCapacity() > maxCapacity){
+        for (auto const &e: v->getEdges()) {
+            if (e.second->getCapacity() != Vertice::infinity() && e.second->getCapacity() > maxCapacity) {
                 maxCapacity = e.second->getCapacity();
             }
         }
@@ -138,10 +136,10 @@ double Generator::getMaxCapacity() {
     return maxCapacity;
 }
 
-void Generator::scaleCapacity(double maxCapacity){
-    for(auto const &v: graph->getVertices()){
+void Generator::scaleCapacity(double maxCapacity) {
+    for (auto const &v: graph->getVertices()) {
         v->scaleCapacity(maxCapacity);
-        for(auto const &e: v->getEdges()){
+        for (auto const &e: v->getEdges()) {
             e.second->scaleCapacity(maxCapacity);
         }
     }
@@ -158,16 +156,16 @@ void Generator::scaleCapacity(double maxCapacity){
  */
 ostream &operator<<(ostream &str, const Generator &generator) {
     auto graph = generator.graph;
-    str << generator.sourceCount   << endl;
-    str << generator.valveCount    << endl;
+    str << generator.sourceCount << endl;
+    str << generator.valveCount << endl;
     str << generator.receiverCount << endl;
 
     auto firstReceiverIt = graph->getVertices().begin() + graph->getFirstReceiverIndex();
     // SOURCES and VALVES
-    for(auto verticeIt = graph->getVertices().begin() + 1; verticeIt != firstReceiverIt; ++verticeIt){
+    for (auto verticeIt = graph->getVertices().begin() + 1; verticeIt != firstReceiverIt; ++verticeIt) {
         str << (*verticeIt)->getCapacity() << ' ';
 
-        for(auto const &edge: (*verticeIt)->getEdges()){
+        for (auto const &edge: (*verticeIt)->getEdges()) {
             str << edge.first << ' ' << edge.second->getCapacity() << ' ';
         }
         str << endl;
@@ -175,6 +173,6 @@ ostream &operator<<(ostream &str, const Generator &generator) {
     return str;
 }
 
-const shared_ptr<Graph> &Generator::getGraph() const {
+const shared_ptr<Graph> Generator::getGraph() const {
     return graph;
 }

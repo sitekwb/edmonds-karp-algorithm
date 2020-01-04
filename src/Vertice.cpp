@@ -76,7 +76,7 @@ void Vertice::incrementCapacity(double capacity) {
 }
 
 void Vertice::scaleCapacity(double maxCapacity) {
-    if(capacity != Vertice::infinity()) {
+    if (capacity != Vertice::infinity()) {
         capacity /= maxCapacity;
     }
 }

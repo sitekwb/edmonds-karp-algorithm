@@ -2,7 +2,7 @@
 // Created by Wojtek on 15/11/2019.
 //
 
-#include "Controller.h"
+#include "Solver.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -12,17 +12,7 @@
 
 using namespace std;
 
-/**
-     * DATA
-     * (liczba źródeł) 2
-     * (liczba zaworów) 2
-     * (liczba punktów odbioru) 2
-     * (w1) 3 c13 4 c14
-     * (w2) 4 c24
-     * (w3) c3 5 c35
-     * (w4) c4 5 c45 6 c46
-*/
-void Controller::loadData(std::istream &stream) {
+void Solver::loadData(std::istream &stream) {
     int sourceCount;
     stream >> sourceCount;
 
@@ -74,66 +64,55 @@ void Controller::loadData(std::istream &stream) {
     graph->createReceiversFlows(receiversCount);
 }
 
-bool Controller::existsAugmentingPath() {
+bool Solver::existsAugmentingPath() {
     return graph->searchAugmentingPath();
 }
 
-void Controller::synchronizeFlowAndGraph() {
+void Solver::synchronizeFlowAndGraph() {
     graph->synchronizeFlowAndGraph();
 }
 
-// print stats
-ostream &operator<<(ostream &str, const Controller &controller) {
-    str << controller.getGraph();
+ostream &operator<<(ostream &str, const Solver &controller) {
+    str << *(controller.getGraph());
     return str;
 }
 
-void Controller::compareResults(istream &originalResultsFileStream) {
+double Solver::compareResults(istream &originalResultsFileStream) {
     stringstream results;
     results << *this;
 
-    while(!originalResultsFileStream.eof()){
+    while (!originalResultsFileStream.eof()) {
         string originalWord, word;
         originalResultsFileStream >> originalWord;
         results >> word;
         double originalValue = 1, value = 1;
-        try{
+        try {
             originalValue = stod(originalWord);
             value = stod(word);
 
-            double error = (originalValue == 0) ? (value - originalValue) : (value - originalValue)/originalValue;
-            if(error > 0.01){
-                cout << "Blad przekroczyl 1%. Wynosi " << error*100 << "%." << endl;
-                break;
+            double error = (originalValue == 0) ? (value - originalValue) : (value - originalValue) / originalValue;
+            if (error > 0.01) {
+                return error * 100;
             }
         }
-        catch(invalid_argument &e){
+        catch (invalid_argument &e) {
             // if it is not double then do nothing
         }
     }
+    return 0;
 }
 
 
-Controller::Controller(std::shared_ptr<Graph> graph) : graph(graph) {
+Solver::Solver(std::shared_ptr<Graph> graph) : graph(graph) {
+    graph->clearFlows();
     graph->createReverseEdges();
 }
 
-Controller::Controller() : graph(std::make_shared<Graph>()){
+Solver::Solver() : graph(std::make_shared<Graph>()) {
 
 }
 
-long long Controller::solve(bool debug) {
-    if(debug) {
-        int i = 1;
-        while (existsAugmentingPath()) {
-            synchronizeFlowAndGraph();
-            if (i % 10 == 0) {
-                cout << "Augmenting path no. " << i << endl;
-            }
-            i++;
-        }
-        return 0;
-    }
+long long Solver::solve() {
     auto t1 = std::chrono::steady_clock::now();
     while (existsAugmentingPath()) {
         synchronizeFlowAndGraph();
@@ -142,6 +121,6 @@ long long Controller::solve(bool debug) {
     return (t2 - t1).count();
 }
 
-const shared_ptr<Graph> &Controller::getGraph() const {
+const shared_ptr<Graph> &Solver::getGraph() const {
     return graph;
 }

@@ -11,17 +11,32 @@
 #include <ostream>
 #include "Vertice.h"
 
+/**
+ * @class
+ * Represents graph.
+ * Stores graph as vector of vertices with adjacent edges.
+ * @see README.md
+ */
 class Graph {
+    /// Vector of vertices in order: s, sources, valves, receivers, t
     std::vector<std::shared_ptr<Vertice>> vertices;
 
-    std::vector<double>flows;
+    /// Array of flows with size of receiver count
+    std::vector<double> flows;
+
     int firstReceiverIndex;
 
     double currentFlow;
+
     int edgesCount = 0;
 
+    /// Creates vertice with infinite capacity
     std::shared_ptr<Vertice> createInfiniteVertice();
+
 public:
+    /// ----- CONSTRUCTORS -----
+
+    /// Default constructor
     Graph();
 
     /**
@@ -32,17 +47,22 @@ public:
      */
     Graph(int sourceCount, int valveCount, int receiverCount);
 
+    /// ----- GETTERS & SETTERS -----
     void setFirstReceiverIndex(int firstReceiverIndex);
+
     [[nodiscard]] int getFirstReceiverIndex() const;
 
     [[nodiscard]] const std::vector<double> &getFlows() const;
+
     [[nodiscard]] const std::vector<std::shared_ptr<Vertice>> &getVertices() const;
+
     void incrementFlow(int index, double value);
+
     void incrementCurrentFlow(double value);
 
     int getSize();
 
-    int getEdgesCount() const;
+    [[nodiscard]] int getEdgesCount() const;
 
     int getTNumber();
 
@@ -52,35 +72,53 @@ public:
 
     std::shared_ptr<Edge> getEdge(int v1, int v2);
 
-    std::shared_ptr<Edge> createReverseEdge(int v_1, int v_2);
-
     int getSourceCount();
+
     int getValveCount();
+
     int getReceiverCount();
+
     void scaleFlows(double maxCapacity);
 
+    /// ----- METHODS -----
+    std::shared_ptr<Edge> createReverseEdge(int v_1, int v_2);
+
     std::shared_ptr<Vertice> addVertice(std::shared_ptr<Vertice>);
+
     std::shared_ptr<Vertice> createS();
+
     std::shared_ptr<Vertice> createT();
+
     std::shared_ptr<Vertice> createSource(double capacity);
+
     std::shared_ptr<Vertice> createValve(double capacity);
+
     std::shared_ptr<Vertice> createVertice(double capacity, bool isValve = true);
+
     std::shared_ptr<Edge> connect(int v_1, int v_2, double edgeCapacity, bool reverseEdge = true);
 
-
-
     void updateFlow();
+
     void createReceivers(int firstReceiverIndex, int receiversNumber);
+
     void connectReceiversWithT(int first_receiver_index, double flow = Vertice::infinity());
+
     void createReverseEdges();
+
     void createReceiversFlows(int receiversCount);
+
     bool searchAugmentingPath();
+
     void synchronizeFlowAndGraph();
 
-    virtual ~Graph(){
+    void clearFlows();
+
+    /// ----- DESTRUCTOR -----
+    virtual ~Graph() {
         vertices.clear();
     }
 
+    /// Print results
     friend std::ostream &operator<<(std::ostream &os, const Graph &graph);
 };
 

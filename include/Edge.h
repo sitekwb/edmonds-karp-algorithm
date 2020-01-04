@@ -8,7 +8,8 @@
 #include "Color.h"
 #include <memory>
 
-class Edge{
+/// Represents edge in graph. Is part of Vertice#edges map.
+class Edge {
     double capacity;
     std::shared_ptr<Edge> reverseEdge;
 public:
@@ -24,7 +25,7 @@ public:
     explicit Edge(double capacity);
 
     //       ---DESTRUCTOR---
-    virtual ~Edge(){
+    virtual ~Edge() {
         reverseEdge.reset();
     }
 };
