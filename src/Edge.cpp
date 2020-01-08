@@ -4,8 +4,7 @@
 #include "Edge.h"
 
 Edge::Edge(double capacity) {
-    this->capacity = capacity;
-    this->reverseEdge = nullptr;
+    setCapacity(capacity);
 }
 
 std::shared_ptr<Edge> Edge::getReverseEdge() const {
@@ -21,7 +20,10 @@ double Edge::getCapacity() const {
 }
 
 void Edge::setCapacity(double capacity) {
-    Edge::capacity = capacity;
+    if(capacity < 0){
+        throw std::out_of_range("Capacity less than 0");
+    }
+    this->capacity = capacity;
 }
 
 void Edge::scaleCapacity(double maxCapacity) {
