@@ -104,7 +104,6 @@ BOOST_AUTO_TEST_SUITE( edgeSuite )
 
 BOOST_AUTO_TEST_SUITE_END()
 
-//TODO vertice suite
 BOOST_AUTO_TEST_SUITE( verticeSuite )
 
     BOOST_AUTO_TEST_CASE( verticeConstructor )
