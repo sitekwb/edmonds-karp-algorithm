@@ -26,7 +26,10 @@ void Edge::setCapacity(double capacity) {
     this->capacity = capacity;
 }
 
-void Edge::scaleCapacity(double maxCapacity) {
+void Edge::scaleCapacity(const double maxCapacity) {
+    if(maxCapacity <= 0){
+        throw std::out_of_range("Scaled capacity out of range");
+    }
     if (capacity != Vertice::infinity()) {
         capacity /= maxCapacity;
     }

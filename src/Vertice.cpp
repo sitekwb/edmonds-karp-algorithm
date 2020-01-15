@@ -3,12 +3,18 @@
 using namespace std;
 
 std::shared_ptr<Edge> Vertice::createEdge(int verticeNumber, double edgeCapacity) {
+    if(verticeNumber < 0){
+        throw out_of_range("Vertice number < 0");
+    }
     auto edge = make_shared<Edge>(edgeCapacity);
     edges[verticeNumber] = edge;
     return edge;
 }
 
 Vertice::Vertice(double capacity) {
+    if(capacity < 0){
+        throw std::out_of_range("Vertice capacity < 0");
+    }
     this->capacity = capacity;
     this->color = WHITE;
     this->parentVertice = noParent();
@@ -56,6 +62,9 @@ double Vertice::getCapacity() const {
 }
 
 void Vertice::reduceCapacity(double capacity) {
+    if(capacity < 0){
+        throw std::out_of_range("Reducing by negative capacity");
+    }
     this->capacity -= capacity;
 }
 
@@ -67,18 +76,20 @@ bool Vertice::issetEdge(int vIndex) {
     return edges.find(vIndex) != edges.cend();
 }
 
-void Vertice::incrementCapacity(double capacity) {
+void Vertice::incrementCapacity(const double capacity) {
+    if(capacity < 0){
+        throw std::out_of_range("Vertice capacity increment < 0");
+    }
     Vertice::capacity += capacity;
 }
 
 void Vertice::scaleCapacity(double maxCapacity) {
+    if(maxCapacity <= 0){
+        throw std::out_of_range("Scaled capacity out of range");
+    }
     if (capacity != Vertice::infinity()) {
         capacity /= maxCapacity;
     }
-}
-
-bool Vertice::isDisconnected() {
-    return !isConnected();
 }
 
 bool Vertice::isConnected() {

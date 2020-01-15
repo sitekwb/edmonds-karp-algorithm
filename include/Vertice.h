@@ -53,8 +53,6 @@ public:
 
     bool isConnected();
 
-    bool isDisconnected();
-
     //   ---CONSTRUCTOR---
     explicit Vertice(double capacity);
 
